@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Giao diện Bắc Ninh</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      margin: 0;
+      background-color: #05a58a;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: 'UnifrakturMaguntia', serif;
+      color: white;
+    }
+
+    h1 {
+      font-size: 4em;
+      margin-bottom: 0.2em;
+      text-align: center;
+    }
+
+    #startButton {
+      background: none;
+      border: 2px solid rgba(255,255,255,0.6);
+      border-radius: 10px;
+      font-size: 2em;
+      font-weight: bold;
+      color: white;
+      cursor: pointer;
+      font-family: Arial, Helvetica, sans-serif;
+      text-transform: uppercase;
+      padding: 10px 22px;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    #startButton:hover {
+      transform: scale(1.06);
+      background-color: rgba(255,255,255,0.12);
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Bắc Ninh</h1>
+  <button id="startButton" type="button" aria-label="Mở bản đồ">Start</button>
+
+  <script>
+    document.getElementById('startButton').addEventListener('click', () => {
+      window.location.href = 'map.html';
+    });
+  </script>
+</body>
+</html>

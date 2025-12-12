@@ -1,0 +1,251 @@
+:root{
+  --bg-dark:#ffffff;
+  --bg-panel:#1f2937;
+  --bg-input:#111827;
+  --border:#374151;
+  --primary:#3b82f6;
+  --text:#ffffff;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+body{background-color:var(--bg-dark);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden}
+
+/* TOOLBAR */
+.toolbar{
+  height:60px;
+  background-color:#151b2b;
+  display:flex;
+  align-items:center;
+  padding:0 20px;
+  border-bottom:1px solid var(--border);
+  gap:20px;
+  z-index:1000;
+}
+.search-box{position:relative;width:300px}
+.search-box input{
+  width:100%;
+  background:var(--bg-input);
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:8px 15px 8px 35px;
+  color:#fff;
+  outline:none;
+}
+.search-box i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#9ca3af}
+.suggestions-list{
+  position:absolute;
+  top:100%;
+  left:0;
+  width:100%;
+  background:var(--bg-panel);
+  border:1px solid var(--border);
+  max-height:250px;
+  overflow-y:auto;
+  display:none;
+  z-index:2000;
+}
+.suggestion-item{
+  padding:10px;
+  cursor:pointer;
+  border-bottom:1px solid var(--border);
+  font-size:13px;
+  color:#e5e7eb;
+}
+.suggestion-item:hover{background:var(--primary)}
+
+.left-group{flex:1;overflow-x:auto}
+.filters{display:flex;gap:15px;white-space:nowrap}
+.checkbox-item{display:flex;align-items:center;gap:6px;font-size:14px;cursor:pointer}
+
+.right-group{display:flex;gap:10px}
+.btn{
+  height:36px;
+  padding:0 16px;
+  border-radius:6px;
+  font-weight:600;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  border:1px solid transparent;
+  color:#fff;
+}
+.btn-primary{background:var(--primary)}
+.btn-secondary{background:var(--bg-input);border-color:var(--border)}
+.btn-primary.active{box-shadow:0 0 0 2px #fff}
+
+/* MAP */
+#map{flex:1;width:100%;z-index:1}
+.leaflet-layer,
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out,
+.leaflet-control-attribution{filter:invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%)}
+
+/* ROUTING PANEL */
+.custom-routing-panel{
+  position:absolute;
+  top:70px;
+  right:20px;
+  width:360px;
+  background:var(--bg-panel);
+  border:1px solid var(--border);
+  border-radius:8px;
+  box-shadow:0 10px 30px rgba(0,0,0,.8);
+  z-index:2000;
+  display:none;
+  overflow:hidden;
+}
+.transport-modes{
+  display:flex;
+  justify-content:space-around;
+  padding:15px;
+  background:#111827;
+  border-bottom:1px solid var(--border);
+}
+.mode-icon{
+  background:none;
+  border:none;
+  color:#6b7280;
+  font-size:20px;
+  cursor:pointer;
+  padding:8px 25px;
+  border-radius:6px;
+  transition:.2s;
+}
+.mode-icon:hover{background:rgba(255,255,255,.1);color:#fff}
+.mode-icon.active{background:var(--primary);color:#fff}
+
+.routing-inputs{padding:15px;background:var(--bg-panel)}
+.input-wrapper{position:relative;margin-bottom:10px}
+.input-wrapper input{
+  width:100%;
+  background:#111827;
+  border:1px solid var(--border);
+  color:#fff;
+  padding:10px;
+  border-radius:4px;
+  font-size:13px;
+  outline:none;
+}
+.input-wrapper input:focus{border-color:var(--primary)}
+.clear-btn{
+  position:absolute;
+  right:10px;
+  top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+  font-size:14px;
+  background:#fff;
+  color:#111827;
+  border-radius:2px;
+  padding:1px 3px;
+}
+
+.start-btn{
+  display:block;
+  width:90%;
+  margin:0 auto 15px;
+  padding:12px;
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  border-radius:6px;
+  font-weight:700;
+  cursor:pointer;
+  font-size:16px;
+}
+.start-btn:hover{background:#2563eb}
+
+/* Itinerary */
+.itinerary-box{
+  border-top:1px solid var(--border);
+  max-height:300px;
+  overflow-y:auto;
+  background:var(--bg-panel);
+}
+.leaflet-routing-alt{border:none !important;margin:0 !important}
+.leaflet-routing-alt table{width:100%;border-collapse:collapse}
+.leaflet-routing-alt tr{border-bottom:1px solid #374151}
+.leaflet-routing-alt tr:hover{background:#374151 !important;cursor:pointer}
+.leaflet-routing-alt td{color:#e5e7eb;font-size:13px;padding:12px 15px !important}
+.leaflet-routing-icon{filter:invert(1)}
+.leaflet-routing-alt h2{background:#111827;padding:10px;margin:0;font-size:14px;color:#fff}
+
+/* Popup */
+.leaflet-popup-content-wrapper{background:var(--bg-panel);color:#fff;border:1px solid var(--border);padding:0;border-radius:8px}
+.leaflet-popup-content{margin:15px;min-width:200px}
+.popup-title{font-weight:700;font-size:15px;display:block;margin-bottom:5px}
+.popup-type{font-size:12px;color:#9ca3af;margin-bottom:15px;display:block}
+.popup-actions{display:flex;gap:10px}
+.popup-btn{
+  flex:1;
+  background:#374151;
+  border:none;
+  color:#fff;
+  padding:8px;
+  border-radius:4px;
+  cursor:pointer;
+  font-size:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+}
+.popup-btn:hover{background:var(--primary)}
+
+/* Marker & Legend */
+.custom-pin-wrapper,.temp-marker-wrapper{background:transparent;border:none}
+.custom-pin{
+  width:30px;height:30px;border-radius:50%;
+  border:2px solid #fff;
+  box-shadow:0 2px 5px rgba(0,0,0,.5);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:14px;
+}
+
+.map-legend{
+  position:absolute;
+  bottom:30px;
+  left:20px;
+  z-index:999;
+  background:rgba(31,41,55,.95);
+  padding:15px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  min-width:180px;
+  font-size:13px;
+  display:block;
+}
+.legend-close{
+  position:absolute;
+  top:6px;
+  right:8px;
+  background:transparent;
+  border:none;
+  cursor:pointer;
+  color:#9ca3af;
+}
+.legend-item{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.legend-dot{
+  width:20px;height:20px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;color:#fff;
+}
+.toggle-legend-btn{
+  position:absolute;
+  bottom:30px;
+  left:20px;
+  z-index:1000;
+  width:40px;height:40px;
+  background:var(--primary);
+  color:#fff;
+  border:none;
+  border-radius:50%;
+  cursor:pointer;
+  display:none;
+  align-items:center;
+  justify-content:center;
+}
+
+/* Hide default routing container (we render itinerary into our own box) */
+.leaflet-routing-container{display:none !important}
