@@ -26,7 +26,7 @@ body{background-color:var(--bg-dark);color:var(--text);height:100vh;display:flex
   width:100%;
   background:var(--bg-input);
   border:1px solid var(--border);
-  border-radius:6px;
+  border-radius:8px;
   padding:8px 15px 8px 35px;
   color:#fff;
   outline:none;
@@ -37,21 +37,26 @@ body{background-color:var(--bg-dark);color:var(--text);height:100vh;display:flex
   top:100%;
   left:0;
   width:100%;
-  background:var(--bg-panel);
+  background:rgba(31,41,55,.98);
   border:1px solid var(--border);
-  max-height:250px;
+  max-height:260px;
   overflow-y:auto;
   display:none;
-  z-index:2000;
+  z-index:3000;
+  border-radius:10px;
+  margin-top:6px;
 }
 .suggestion-item{
-  padding:10px;
+  padding:10px 12px;
   cursor:pointer;
-  border-bottom:1px solid var(--border);
+  border-bottom:1px solid rgba(255,255,255,.06);
   font-size:13px;
   color:#e5e7eb;
+  display:flex;
+  align-items:center;
 }
-.suggestion-item:hover{background:var(--primary)}
+.suggestion-item:hover{background:rgba(59,130,246,.25)}
+.suggestion-item.active{background:var(--primary)}
 
 .left-group{flex:1;overflow-x:auto}
 .filters{display:flex;gap:15px;white-space:nowrap}
@@ -61,14 +66,15 @@ body{background-color:var(--bg-dark);color:var(--text);height:100vh;display:flex
 .btn{
   height:36px;
   padding:0 16px;
-  border-radius:6px;
-  font-weight:600;
+  border-radius:8px;
+  font-weight:700;
   cursor:pointer;
   display:flex;
   align-items:center;
   gap:8px;
   border:1px solid transparent;
   color:#fff;
+  background:transparent;
 }
 .btn-primary{background:var(--primary)}
 .btn-secondary{background:var(--bg-input);border-color:var(--border)}
@@ -99,18 +105,18 @@ body.dark-mode #map.no-invert .leaflet-control-attribution{
   top:70px;
   right:20px;
   width:360px;
-  background:var(--bg-panel);
+  background:rgba(31,41,55,.98);
   border:1px solid var(--border);
-  border-radius:8px;
+  border-radius:12px;
   box-shadow:0 10px 30px rgba(0,0,0,.8);
-  z-index:2000;
+  z-index:2500;
   display:none;
   overflow:hidden;
 }
 .transport-modes{
   display:flex;
   justify-content:space-around;
-  padding:15px;
+  padding:12px;
   background:#111827;
   border-bottom:1px solid var(--border);
 }
@@ -120,14 +126,14 @@ body.dark-mode #map.no-invert .leaflet-control-attribution{
   color:#6b7280;
   font-size:20px;
   cursor:pointer;
-  padding:8px 25px;
-  border-radius:6px;
+  padding:10px 22px;
+  border-radius:10px;
   transition:.2s;
 }
-.mode-icon:hover{background:rgba(255,255,255,.1);color:#fff}
+.mode-icon:hover{background:rgba(255,255,255,.08);color:#fff}
 .mode-icon.active{background:var(--primary);color:#fff}
 
-.routing-inputs{padding:15px;background:var(--bg-panel)}
+.routing-inputs{padding:12px}
 .input-wrapper{position:relative;margin-bottom:10px}
 .input-wrapper input{
   width:100%;
@@ -135,7 +141,7 @@ body.dark-mode #map.no-invert .leaflet-control-attribution{
   border:1px solid var(--border);
   color:#fff;
   padding:10px;
-  border-radius:4px;
+  border-radius:8px;
   font-size:13px;
   outline:none;
 }
@@ -149,20 +155,20 @@ body.dark-mode #map.no-invert .leaflet-control-attribution{
   font-size:14px;
   background:#fff;
   color:#111827;
-  border-radius:2px;
-  padding:1px 3px;
+  border-radius:4px;
+  padding:2px 6px;
 }
 
 .start-btn{
   display:block;
-  width:90%;
-  margin:0 auto 15px;
+  width:92%;
+  margin:0 auto 12px;
   padding:12px;
   background:var(--primary);
   color:#fff;
   border:none;
-  border-radius:6px;
-  font-weight:700;
+  border-radius:10px;
+  font-weight:800;
   cursor:pointer;
   font-size:16px;
 }
@@ -173,21 +179,20 @@ body.dark-mode #map.no-invert .leaflet-control-attribution{
   border-top:1px solid var(--border);
   max-height:300px;
   overflow-y:auto;
-  background:var(--bg-panel);
 }
 .leaflet-routing-alt{border:none !important;margin:0 !important}
 .leaflet-routing-alt table{width:100%;border-collapse:collapse}
-.leaflet-routing-alt tr{border-bottom:1px solid #374151}
-.leaflet-routing-alt tr:hover{background:#374151 !important;cursor:pointer}
-.leaflet-routing-alt td{color:#e5e7eb;font-size:13px;padding:12px 15px !important}
+.leaflet-routing-alt tr{border-bottom:1px solid rgba(255,255,255,.08)}
+.leaflet-routing-alt tr:hover{background:rgba(255,255,255,.06) !important;cursor:pointer}
+.leaflet-routing-alt td{color:#e5e7eb;font-size:13px;padding:12px 14px !important}
 .leaflet-routing-icon{filter:invert(1)}
 .leaflet-routing-alt h2{background:#111827;padding:10px;margin:0;font-size:14px;color:#fff}
 
 /* Popup */
-.leaflet-popup-content-wrapper{background:var(--bg-panel);color:#fff;border:1px solid var(--border);padding:0;border-radius:8px}
-.leaflet-popup-content{margin:15px;min-width:200px}
-.popup-title{font-weight:700;font-size:15px;display:block;margin-bottom:5px}
-.popup-type{font-size:12px;color:#9ca3af;margin-bottom:15px;display:block}
+.leaflet-popup-content-wrapper{background:rgba(31,41,55,.98);color:#fff;border:1px solid var(--border);padding:0;border-radius:12px}
+.leaflet-popup-content{margin:14px;min-width:200px}
+.popup-title{font-weight:800;font-size:15px;display:block;margin-bottom:5px}
+.popup-type{font-size:12px;color:#9ca3af;margin-bottom:12px;display:block}
 .popup-actions{display:flex;gap:10px}
 .popup-btn{
   flex:1;
@@ -195,13 +200,13 @@ body.dark-mode #map.no-invert .leaflet-control-attribution{
   border:none;
   color:#fff;
   padding:8px;
-  border-radius:4px;
+  border-radius:8px;
   cursor:pointer;
   font-size:12px;
   display:flex;
   align-items:center;
   justify-content:center;
-  gap:5px;
+  gap:6px;
 }
 .popup-btn:hover{background:var(--primary)}
 
@@ -210,7 +215,7 @@ body.dark-mode #map.no-invert .leaflet-control-attribution{
 .custom-pin{
   width:30px;height:30px;border-radius:50%;
   border:2px solid #fff;
-  box-shadow:0 2px 5px rgba(0,0,0,.5);
+  box-shadow:0 2px 8px rgba(0,0,0,.5);
   display:flex;align-items:center;justify-content:center;
   color:#fff;font-size:14px;
 }
@@ -222,12 +227,13 @@ body.dark-mode #map.no-invert .leaflet-control-attribution{
   z-index:999;
   background:rgba(31,41,55,.95);
   padding:15px;
-  border-radius:8px;
+  border-radius:12px;
   border:1px solid var(--border);
   min-width:180px;
   font-size:13px;
   display:block;
 }
+.map-legend h4{margin-bottom:10px;font-size:14px}
 .legend-close{
   position:absolute;
   top:6px;
@@ -269,11 +275,11 @@ body.dark-mode #map.no-invert .leaflet-control-attribution{
   position:absolute;
   top:70px;
   left:20px;
-  width:320px;
+  width:340px;
   background:rgba(31,41,55,.98);
   border:1px solid var(--border);
-  border-radius:10px;
-  z-index:2500;
+  border-radius:14px;
+  z-index:2600;
   box-shadow:0 10px 30px rgba(0,0,0,.8);
   overflow:hidden;
   display:none;
@@ -286,10 +292,10 @@ body.dark-mode #map.no-invert .leaflet-control-attribution{
   background:#111827;
   border-bottom:1px solid var(--border);
 }
-.layers-title{font-weight:700;color:#fff;font-size:14px}
+.layers-title{font-weight:800;color:#fff;font-size:14px}
 .layers-close{
   width:34px;height:34px;
-  border:none;border-radius:8px;
+  border:none;border-radius:10px;
   background:transparent;color:#9ca3af;
   cursor:pointer;
 }
@@ -300,7 +306,7 @@ body.dark-mode #map.no-invert .leaflet-control-attribution{
   font-size:12px;
   color:#9ca3af;
   margin-bottom:10px;
-  font-weight:700;
+  font-weight:800;
   text-transform:uppercase;
   letter-spacing:.3px;
 }
@@ -313,16 +319,16 @@ body.dark-mode #map.no-invert .leaflet-control-attribution{
 .layer-tile{
   border:1px solid var(--border);
   background:#0b1220;
-  border-radius:10px;
+  border-radius:12px;
   padding:8px;
   cursor:pointer;
   color:#fff;
   text-align:left;
 }
 .layer-tile.active{outline:2px solid var(--primary)}
-.layer-tile .label{font-size:12px;margin-top:8px;color:#e5e7eb;font-weight:600}
+.layer-tile .label{font-size:12px;margin-top:8px;color:#e5e7eb;font-weight:700}
 .thumb{
-  height:54px;border-radius:8px;
+  height:54px;border-radius:10px;
   border:1px solid rgba(255,255,255,.08);
 }
 
@@ -374,6 +380,8 @@ body.light-mode .suggestion-item{
   border-bottom:1px solid #e5e7eb;
 }
 body.light-mode .suggestion-item:hover{ background:#e5e7eb; }
+body.light-mode .suggestion-item.active{ background:#dbeafe; }
+
 body.light-mode .btn{ color:#111827; }
 body.light-mode .btn-secondary{
   background:#ffffff;
@@ -480,4 +488,3 @@ body.light-mode .popup-btn:hover{ background:#dbeafe; }
   .layer-grid{ grid-template-columns:1fr 1fr; }
   .map-legend{ width:200px; }
 }
-.suggestion-item.active{background:var(--primary)}
