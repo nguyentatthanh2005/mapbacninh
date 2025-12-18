@@ -480,3 +480,4 @@ body.light-mode .popup-btn:hover{ background:#dbeafe; }
   .layer-grid{ grid-template-columns:1fr 1fr; }
   .map-legend{ width:200px; }
 }
+.suggestion-item.active{background:var(--primary)}

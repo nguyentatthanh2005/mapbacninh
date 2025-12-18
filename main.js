@@ -447,78 +447,132 @@
     setPoint('end', L.latLng(lat, lng), name);
   };
 
-  // =========================
-  // SEARCH
-  // =========================
-  window.showSuggestions = (val) => {
-    const inputVal = String(val).toLowerCase().trim();
-    if (!suggestionBox) return;
+ // =========================
+// SEARCH (click + keyboard)
+// =========================
+let currentSuggestions = [];
+let activeSuggestIndex = -1;
 
-    if (inputVal.length < 1) {
-      suggestionBox.style.display = 'none';
-      return;
+function hideSuggestions() {
+  if (suggestionBox) suggestionBox.style.display = 'none';
+  currentSuggestions = [];
+  activeSuggestIndex = -1;
+}
+
+function renderSuggestions() {
+  if (!suggestionBox) return;
+
+  if (currentSuggestions.length === 0) {
+    hideSuggestions();
+    return;
+  }
+
+  suggestionBox.innerHTML = currentSuggestions.map((l, idx) => {
+    const style = getStyle(l.type);
+    const safeName = JSON.stringify(l.name);
+    const activeCls = idx === activeSuggestIndex ? 'active' : '';
+    return `
+      <div class="suggestion-item ${activeCls}" data-idx="${idx}" onclick="selectSuggestion(${safeName})" role="option">
+        <i class="fa-solid ${style.icon}" style="color:${style.color};margin-right:8px"></i>
+        ${escapeHtml(l.name)}
+      </div>
+    `;
+  }).join('');
+
+  suggestionBox.style.display = 'block';
+
+  // auto scroll item active vào view (khi dùng phím)
+  if (activeSuggestIndex >= 0) {
+    const el = suggestionBox.querySelector(`.suggestion-item[data-idx="${activeSuggestIndex}"]`);
+    el?.scrollIntoView({ block: 'nearest' });
+  }
+}
+
+window.showSuggestions = (val) => {
+  const inputVal = String(val).toLowerCase().trim();
+  if (!suggestionBox) return;
+
+  if (inputVal.length < 1) {
+    hideSuggestions();
+    return;
+  }
+
+  currentSuggestions = locations
+    .filter(l => l.name.toLowerCase().includes(inputVal))
+    .slice(0, 12);
+
+  activeSuggestIndex = currentSuggestions.length ? 0 : -1;
+  renderSuggestions();
+};
+
+window.selectSuggestion = (name) => {
+  if (searchInput) searchInput.value = name;
+  hideSuggestions();
+
+  const found = locations.find(l => l.name === name);
+  if (!found) return;
+
+  // bay tới điểm
+  map.setView([found.lat, found.lng], 16);
+
+  // mở popup nếu marker đang render
+  const markerEntry = allMarkers.find(m => m.name === found.name);
+  if (markerEntry) {
+    markerEntry.marker.openPopup();
+    return;
+  }
+
+  // nếu marker đang bị tắt do filter -> bật filter loại đó và render lại
+  const cb = document.querySelector(`.filters input[value="${CSS.escape(found.type)}"]`);
+  if (cb) {
+    cb.checked = true;
+    renderMap();
+    setTimeout(() => {
+      const m2 = allMarkers.find(m => m.name === found.name);
+      if (m2) m2.marker.openPopup();
+    }, 100);
+  }
+};
+
+// Bắt phím ↑ ↓ Enter Esc ngay trên input (không cần sửa HTML)
+function onSearchKeyDown(e) {
+  if (!suggestionBox || suggestionBox.style.display !== 'block') {
+    // nếu chưa mở suggestions, Enter vẫn cho tìm như cũ
+    if (e.key === 'Enter') {
+      const val = String(searchInput?.value || '');
+      const found = locations.find(l => l.name.toLowerCase().includes(val.toLowerCase()));
+      if (found) window.selectSuggestion(found.name);
     }
+    return;
+  }
 
-    const matches = locations
-      .filter(l => l.name.toLowerCase().includes(inputVal))
-      .slice(0, 8);
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    activeSuggestIndex = Math.min(activeSuggestIndex + 1, currentSuggestions.length - 1);
+    renderSuggestions();
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    activeSuggestIndex = Math.max(activeSuggestIndex - 1, 0);
+    renderSuggestions();
+  } else if (e.key === 'Enter') {
+    e.preventDefault();
+    const item = currentSuggestions[activeSuggestIndex];
+    if (item) window.selectSuggestion(item.name);
+  } else if (e.key === 'Escape') {
+    hideSuggestions();
+  }
+}
 
-    if (matches.length === 0) {
-      suggestionBox.style.display = 'none';
-      return;
-    }
+if (searchInput) {
+  searchInput.addEventListener('keydown', onSearchKeyDown);
+  searchInput.addEventListener('blur', () => setTimeout(hideSuggestions, 120));
+}
 
-    suggestionBox.innerHTML = matches.map(l => {
-      const style = getStyle(l.type);
-      const safeName = JSON.stringify(l.name);
-      return `
-        <div class="suggestion-item" onclick="selectSuggestion(${safeName})" role="option">
-          <i class="fa-solid ${style.icon}" style="color:${style.color};margin-right:8px"></i>
-          ${escapeHtml(l.name)}
-        </div>
-      `;
-    }).join('');
+document.addEventListener('click', (e) => {
+  const box = document.querySelector('.search-box');
+  if (box && !box.contains(e.target)) hideSuggestions();
+});
 
-    suggestionBox.style.display = 'block';
-  };
-
-  window.selectSuggestion = (name) => {
-    if (searchInput) searchInput.value = name;
-    if (suggestionBox) suggestionBox.style.display = 'none';
-
-    const found = locations.find(l => l.name === name);
-    if (!found) return;
-
-    map.setView([found.lat, found.lng], 16);
-
-    const markerEntry = allMarkers.find(m => m.name === found.name);
-    if (markerEntry) {
-      markerEntry.marker.openPopup();
-      return;
-    }
-
-    const cb = document.querySelector(`.filters input[value="${CSS.escape(found.type)}"]`);
-    if (cb) {
-      cb.checked = true;
-      renderMap();
-      setTimeout(() => {
-        const m2 = allMarkers.find(m => m.name === found.name);
-        if (m2) m2.marker.openPopup();
-      }, 100);
-    }
-  };
-
-  window.handleSearch = (e) => {
-    if (e.key !== 'Enter') return;
-    const val = String(e.target.value || '');
-    const found = locations.find(l => l.name.toLowerCase().includes(val.toLowerCase()));
-    if (found) window.selectSuggestion(found.name);
-  };
-
-  document.addEventListener('click', (e) => {
-    const box = document.querySelector('.search-box');
-    if (box && !box.contains(e.target) && suggestionBox) suggestionBox.style.display = 'none';
-  });
 
   // =========================
   // GEOLOCATION
