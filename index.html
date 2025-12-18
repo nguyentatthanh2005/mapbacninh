@@ -16,45 +16,114 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      font-family: 'UnifrakturMaguntia', serif;
+      font-family: Arial, Helvetica, sans-serif;
       color: white;
+      overflow: hidden;
     }
 
     h1 {
       font-size: 4em;
-      margin-bottom: 0.2em;
+      margin: 0 0 12px;
       text-align: center;
+      letter-spacing: 1px;
     }
 
-    #startButton {
-      background: none;
-      border: 2px solid rgba(255,255,255,0.6);
-      border-radius: 10px;
-      font-size: 2em;
-      font-weight: bold;
-      color: white;
-      cursor: pointer;
-      font-family: Arial;
-      text-transform: uppercase;
-      padding: 10px 22px;
-      transition: transform 0.2s, background-color 0.2s;
+    .subtitle{
+      font-family: Arial, sans-serif;
+      opacity: .85;
+      margin: 0 0 26px;
+      font-size: 16px;
     }
 
-    #startButton:hover {
-      transform: scale(1.06);
-      background-color: rgba(255,255,255,0.12);
+    /* Loader ring */
+    .loader-wrap{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:12px;
+      user-select:none;
+    }
+    .ring{
+      width:78px;
+      height:78px;
+      border-radius:50%;
+      border:6px solid rgba(255,255,255,.22);
+      border-top-color: rgba(255,255,255,.95);
+      animation: spin 1s linear infinite;
+      box-shadow: 0 8px 18px rgba(0,0,0,.18);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .progress-text{
+      font-family: Arial, sans-serif;
+      font-weight: 800;
+      letter-spacing: .5px;
+      font-size: 18px;
+    }
+
+    /* Progress bar */
+    .bar{
+      width: 280px;
+      max-width: 82vw;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.18);
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.25);
+    }
+    .bar > div{
+      height:100%;
+      width:0%;
+      background: rgba(255,255,255,.85);
+      border-radius: 999px;
+      transition: width .12s linear;
+    }
+
+    /* Small hint */
+    .hint{
+      font-family: Arial, sans-serif;
+      opacity: .75;
+      font-size: 13px;
+      margin-top: 8px;
     }
   </style>
 </head>
 
 <body>
   <h1>Bắc Ninh</h1>
-  <button id="startButton" type="button" aria-label="Mở bản đồ">Start</button>
+  <p class="subtitle">Đang tải bản đồ…</p>
+
+  <div class="loader-wrap" aria-label="Loading">
+    <div class="ring" aria-hidden="true"></div>
+    <div class="progress-text" id="progressText">0%</div>
+    <div class="bar" aria-hidden="true"><div id="barFill"></div></div>
+    <div class="hint">Vui lòng chờ trong giây lát</div>
+  </div>
 
   <script>
-    document.getElementById('startButton').addEventListener('click', () => {
-      window.location.href = 'map.html';
-    });
+    // Loading 5s rồi chuyển trang
+    const DURATION = 5000;
+    const start = performance.now();
+
+    const progressText = document.getElementById('progressText');
+    const barFill = document.getElementById('barFill');
+
+    function tick(now){ //phần trăm load 100% Trong 5s
+      const elapsed = now - start;
+      const p = Math.min(1, elapsed / DURATION);
+      const percent = Math.round(p * 100);
+
+      progressText.textContent = percent + '%';
+      barFill.style.width = percent + '%';
+
+      if (p < 1){
+        requestAnimationFrame(tick);
+      } else {
+        window.location.href = 'map.html';
+      }
+    }
+
+    requestAnimationFrame(tick);
   </script>
 </body>
 </html>
