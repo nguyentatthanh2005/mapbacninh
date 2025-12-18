@@ -76,10 +76,22 @@ body{background-color:var(--bg-dark);color:var(--text);height:100vh;display:flex
 
 /* MAP */
 #map{flex:1;width:100%;z-index:1}
-.leaflet-layer,
-.leaflet-control-zoom-in,
-.leaflet-control-zoom-out,
-.leaflet-control-attribution{filter:invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%)}
+
+/* Dark-mode invert trick (chỉ bật khi body.dark-mode) */
+body.dark-mode .leaflet-layer,
+body.dark-mode .leaflet-control-zoom-in,
+body.dark-mode .leaflet-control-zoom-out,
+body.dark-mode .leaflet-control-attribution{
+  filter:invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+
+/* FIX: vệ tinh nhìn đúng màu trong dark-mode */
+body.dark-mode #map.no-invert .leaflet-layer,
+body.dark-mode #map.no-invert .leaflet-control-zoom-in,
+body.dark-mode #map.no-invert .leaflet-control-zoom-out,
+body.dark-mode #map.no-invert .leaflet-control-attribution{
+  filter:none !important;
+}
 
 /* ROUTING PANEL */
 .custom-routing-panel{
@@ -247,5 +259,224 @@ body{background-color:var(--bg-dark);color:var(--text);height:100vh;display:flex
   justify-content:center;
 }
 
-/* Hide default routing container (we render itinerary into our own box) */
+/* Hide default routing container */
 .leaflet-routing-container{display:none !important}
+
+/* =========================
+   LAYERS PANEL
+   ========================= */
+.layers-panel{
+  position:absolute;
+  top:70px;
+  left:20px;
+  width:320px;
+  background:rgba(31,41,55,.98);
+  border:1px solid var(--border);
+  border-radius:10px;
+  z-index:2500;
+  box-shadow:0 10px 30px rgba(0,0,0,.8);
+  overflow:hidden;
+  display:none;
+}
+.layers-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:12px 12px;
+  background:#111827;
+  border-bottom:1px solid var(--border);
+}
+.layers-title{font-weight:700;color:#fff;font-size:14px}
+.layers-close{
+  width:34px;height:34px;
+  border:none;border-radius:8px;
+  background:transparent;color:#9ca3af;
+  cursor:pointer;
+}
+.layers-close:hover{background:rgba(255,255,255,.08);color:#fff}
+
+.layers-section{padding:12px}
+.section-title{
+  font-size:12px;
+  color:#9ca3af;
+  margin-bottom:10px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:.3px;
+}
+
+.layer-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:10px;
+}
+.layer-tile{
+  border:1px solid var(--border);
+  background:#0b1220;
+  border-radius:10px;
+  padding:8px;
+  cursor:pointer;
+  color:#fff;
+  text-align:left;
+}
+.layer-tile.active{outline:2px solid var(--primary)}
+.layer-tile .label{font-size:12px;margin-top:8px;color:#e5e7eb;font-weight:600}
+.thumb{
+  height:54px;border-radius:8px;
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.thumb-osm{
+  background:
+    linear-gradient(135deg, rgba(59,130,246,.35), rgba(16,185,129,.2)),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.08), rgba(255,255,255,.08) 3px, transparent 3px, transparent 8px);
+}
+.thumb-terrain{
+  background:
+    radial-gradient(circle at 30% 30%, rgba(34,197,94,.25), transparent 55%),
+    radial-gradient(circle at 70% 70%, rgba(250,204,21,.20), transparent 60%),
+    linear-gradient(135deg, rgba(20,83,45,.35), rgba(17,24,39,1));
+}
+.thumb-sat{
+  background:
+    radial-gradient(circle at 35% 35%, rgba(16,185,129,.25), transparent 55%),
+    radial-gradient(circle at 65% 65%, rgba(59,130,246,.18), transparent 60%),
+    linear-gradient(135deg, rgba(6,95,70,.45), rgba(2,6,23,1));
+}
+
+.overlay-list{display:flex;flex-direction:column;gap:10px}
+.overlay-item{display:flex;align-items:center;gap:8px;color:#e5e7eb;font-size:14px}
+.layer-note{margin-top:10px;font-size:12px;color:#9ca3af;line-height:1.35}
+
+/* =========================
+   LIGHT MODE OVERRIDE
+   ========================= */
+body.light-mode{
+  background:#f3f4f6;
+  color:#111827;
+}
+body.light-mode .toolbar{
+  background:#ffffff;
+  border-bottom:1px solid #e5e7eb;
+}
+body.light-mode .search-box input{
+  background:#ffffff;
+  border-color:#e5e7eb;
+  color:#111827;
+}
+body.light-mode .search-box i{ color:#6b7280; }
+body.light-mode .suggestions-list{
+  background:#ffffff;
+  border-color:#e5e7eb;
+}
+body.light-mode .suggestion-item{
+  color:#111827;
+  border-bottom:1px solid #e5e7eb;
+}
+body.light-mode .suggestion-item:hover{ background:#e5e7eb; }
+body.light-mode .btn{ color:#111827; }
+body.light-mode .btn-secondary{
+  background:#ffffff;
+  border-color:#e5e7eb;
+}
+body.light-mode .custom-routing-panel,
+body.light-mode .map-legend,
+body.light-mode .layers-panel,
+body.light-mode .leaflet-popup-content-wrapper{
+  background:#ffffff !important;
+  color:#111827 !important;
+  border-color:#e5e7eb !important;
+}
+body.light-mode .popup-type,
+body.light-mode .section-title,
+body.light-mode .layer-note{ color:#6b7280 !important; }
+body.light-mode .popup-btn{ background:#f3f4f6; color:#111827; }
+body.light-mode .popup-btn:hover{ background:#dbeafe; }
+
+/* =========================
+   MOBILE RESPONSIVE
+   ========================= */
+@media (max-width: 768px){
+  .toolbar{
+    height:auto;
+    padding:10px 12px;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:stretch;
+  }
+  .search-box{
+    width:100%;
+    order:1;
+  }
+  .right-group{
+    width:100%;
+    order:2;
+    display:flex;
+    gap:8px;
+    justify-content:space-between;
+  }
+  .right-group .btn{
+    flex:1;
+    justify-content:center;
+    padding:0 10px;
+  }
+  .right-group .btn span{ display:none; }
+
+  .left-group{
+    width:100%;
+    order:3;
+    overflow-x:auto;
+    padding-bottom:6px;
+  }
+  .filters{
+    gap:10px;
+    padding:4px 2px;
+  }
+  .checkbox-item{
+    font-size:13px;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.08);
+    padding:6px 10px;
+    border-radius:999px;
+  }
+
+  .custom-routing-panel{
+    top:auto;
+    right:10px;
+    left:10px;
+    bottom:10px;
+    width:auto;
+    border-radius:14px;
+    max-height:60vh;
+    overflow:hidden;
+  }
+  .itinerary-box{ max-height:32vh; }
+
+  .layers-panel{
+    top:auto;
+    left:10px;
+    right:10px;
+    bottom:10px;
+    width:auto;
+    border-radius:14px;
+    max-height:70vh;
+    overflow:auto;
+  }
+
+  .map-legend{
+    left:10px;
+    bottom:10px;
+    width:220px;
+    padding:12px;
+    border-radius:12px;
+  }
+
+  .leaflet-top.leaflet-right{
+    top:70px;
+  }
+}
+
+@media (max-width: 420px){
+  .layer-grid{ grid-template-columns:1fr 1fr; }
+  .map-legend{ width:200px; }
+}

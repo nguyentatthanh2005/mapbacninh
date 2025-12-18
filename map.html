@@ -38,15 +38,25 @@
     </div>
 
     <div class="right-group">
-      <button class="btn btn-primary" id="btnDirect" type="button" onclick="toggleRouting()">
-        <i class="fa-solid fa-diamond" aria-hidden="true"></i> Chỉ đường
+      <button class="btn btn-secondary" type="button" onclick="toggleMapLayers()">
+        <i class="fa-solid fa-layer-group" aria-hidden="true"></i> <span>Lớp</span>
       </button>
+
+      <button class="btn btn-primary" id="btnDirect" type="button" onclick="toggleRouting()">
+        <i class="fa-solid fa-diamond" aria-hidden="true"></i> <span>Chỉ đường</span>
+      </button>
+
       <button class="btn btn-secondary" type="button" onclick="locateUser()">
-        <i class="fa-solid fa-location-dot" style="color:#ec4899" aria-hidden="true"></i> Định vị
+        <i class="fa-solid fa-location-dot" style="color:#ec4899" aria-hidden="true"></i> <span>Định vị</span>
+      </button>
+
+      <button class="btn btn-secondary" id="btnTheme" type="button" onclick="toggleTheme()">
+        <i class="fa-solid fa-moon" aria-hidden="true"></i> <span>Dark</span>
       </button>
     </div>
   </header>
 
+  <!-- Panel chỉ đường -->
   <div id="routingPanel" class="custom-routing-panel" aria-label="Bảng chỉ đường">
     <div class="transport-modes">
       <button class="mode-icon active" id="mode-driving" type="button" onclick="setMode('driving')" aria-label="Ô tô">
@@ -79,6 +89,7 @@
     <div id="itineraryContainer" class="itinerary-box"></div>
   </div>
 
+  <!-- Chú thích -->
   <div class="map-legend" id="legendBox">
     <button class="legend-close" type="button" onclick="toggleLegend()" aria-label="Đóng chú thích">
       <i class="fa-solid fa-xmark" aria-hidden="true"></i>
@@ -96,6 +107,66 @@
   <button class="toggle-legend-btn" id="openLegendBtn" type="button" onclick="toggleLegend()" aria-label="Mở chú thích">
     <i class="fa-solid fa-info" aria-hidden="true"></i>
   </button>
+
+  <!-- Panel lớp bản đồ -->
+  <div id="layersPanel" class="layers-panel" aria-label="Thông tin chi tiết trên bản đồ">
+    <div class="layers-header">
+      <div class="layers-title">Thông tin chi tiết trên bản đồ</div>
+      <button class="layers-close" type="button" onclick="toggleMapLayers(false)" aria-label="Đóng">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="layers-section">
+      <div class="section-title">Loại bản đồ</div>
+      <div class="layer-grid">
+        <button class="layer-tile active" data-base="osm" type="button" onclick="setBaseLayer('osm')">
+          <div class="thumb thumb-osm"></div>
+          <div class="label">Mặc định</div>
+        </button>
+
+        <button class="layer-tile" data-base="terrain" type="button" onclick="setBaseLayer('terrain')">
+          <div class="thumb thumb-terrain"></div>
+          <div class="label">Địa hình</div>
+        </button>
+
+        <button class="layer-tile" data-base="sat" type="button" onclick="setBaseLayer('sat')">
+          <div class="thumb thumb-sat"></div>
+          <div class="label">Vệ tinh</div>
+        </button>
+      </div>
+    </div>
+
+    <div class="layers-section">
+      <div class="section-title">Lớp phủ</div>
+
+      <div class="overlay-list">
+        <label class="overlay-item">
+          <input type="checkbox" onchange="toggleOverlayLayer('bike', this.checked)">
+          Đi xe đạp
+        </label>
+
+        <label class="overlay-item">
+          <input type="checkbox" onchange="toggleOverlayLayer('transit', this.checked)">
+          Giao thông công cộng
+        </label>
+
+        <label class="overlay-item">
+          <input type="checkbox" onchange="toggleOverlayLayer('aqi', this.checked)">
+          Chất lượng không khí (AQI)
+        </label>
+
+        <label class="overlay-item">
+          <input type="checkbox" onchange="toggleOverlayLayer('fires', this.checked)">
+          Cháy rừng
+        </label>
+      </div>
+
+      <div class="layer-note">
+        * AQI cần token WAQI. Vệ tinh sẽ tự tắt “invert” khi đang Dark-mode.
+      </div>
+    </div>
+  </div>
 
   <div id="map"></div>
 

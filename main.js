@@ -1,16 +1,66 @@
 (() => {
   'use strict';
 
-  // Map init
+  // =========================
+  // CONFIG
+  // =========================
   const CENTER_BN = [21.178138, 106.071002];
+  const WAQI_TOKEN = 'YOUR_WAQI_TOKEN'; // <-- thay token nếu dùng AQI
+
+  // =========================
+  // MAP INIT
+  // =========================
   const map = L.map('map', { zoomControl: false }).setView(CENTER_BN, 15);
-
   L.control.zoom({ position: 'bottomright' }).addTo(map);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    attribution: '© OpenStreetMap'
-  }).addTo(map);
 
+  // =========================
+  // BASE LAYERS + OVERLAYS
+  // =========================
+  const baseLayers = {
+    osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap'
+    }),
+    terrain: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+      maxZoom: 17,
+      attribution: '© OpenTopoMap'
+    }),
+    sat: L.tileLayer(
+      'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+      { maxZoom: 19, attribution: 'Tiles © Esri' }
+    )
+  };
+
+  const overlays = {
+    bike: L.tileLayer('https://{s}.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png', {
+      maxZoom: 20, opacity: 0.95, attribution: '© CyclOSM / OpenStreetMap'
+    }),
+    transit: L.tileLayer('https://{s}.tile.openptmap.org/pt/{z}/{x}/{y}.png', {
+      maxZoom: 19, opacity: 0.9, attribution: '© OpenPTMap / OpenStreetMap'
+    }),
+    aqi: L.tileLayer(`https://tiles.waqi.info/tiles/usepa-aqi/{z}/{x}/{y}.png?token=${encodeURIComponent(WAQI_TOKEN)}`, {
+      maxZoom: 19, opacity: 0.65, attribution: '© WAQI'
+    }),
+    fires: L.tileLayer.wms('https://firms.modaps.eosdis.nasa.gov/wms/', {
+      layers: 'fires_modis_24',
+      format: 'image/png',
+      transparent: true,
+      opacity: 0.7,
+      attribution: '© NASA FIRMS'
+    })
+  };
+
+  let currentBaseKey = 'osm';
+  baseLayers[currentBaseKey].addTo(map);
+
+  // Leaflet layer control (giữ lại cho tiện)
+  L.control.layers(
+    { 'Mặc định (OSM)': baseLayers.osm, 'Địa hình': baseLayers.terrain, 'Vệ tinh': baseLayers.sat },
+    { 'Đi xe đạp': overlays.bike, 'Giao thông công cộng': overlays.transit, 'Chất lượng không khí (AQI)': overlays.aqi, 'Cháy rừng': overlays.fires },
+    { position: 'topright', collapsed: true }
+  ).addTo(map);
+
+  // Center circle
   L.circle(CENTER_BN, {
     color: '#3b82f6',
     fillColor: '#3b82f6',
@@ -18,23 +68,83 @@
     radius: 2500
   }).addTo(map);
 
-  // Data
+  // =========================
+  // DATA
+  // =========================
   const locations = [
     { lat: 21.178138, lng: 106.071002, type: 'Đường xá', name: 'Ngã 6 Bắc Ninh' },
-    { lat: 21.182410, lng: 106.072610, type: 'Trường', name: 'THPT Hàn Thuyên' },
-    { lat: 21.187350, lng: 106.074890, type: 'Hành chính', name: 'UBND Tỉnh Bắc Ninh' },
-    { lat: 21.178450, lng: 106.071420, type: 'Mua sắm', name: 'Vincom Plaza Bắc Ninh' },
-    { lat: 21.169600, lng: 106.062300, type: 'Y tế', name: 'Bệnh viện Đa khoa Tỉnh' },
-    { lat: 21.174200, lng: 106.058900, type: 'Ăn uống', name: 'Nhà hàng Trâu Ngon Quán' },
-    { lat: 21.183420, lng: 106.075250, type: 'Đường xá', name: 'Ngã 4 Cổng Ô' },
-    { lat: 21.184350, lng: 106.076900, type: 'Mua sắm', name: 'MediaMart Bắc Ninh' },
-    { lat: 21.178580, lng: 106.071250, type: 'Ăn uống', name: 'Highlands Coffee Ngã 6' },
-    { lat: 21.185500, lng: 106.055000, type: 'Y tế', name: 'PK Tai Mũi Họng' },
-    { lat: 21.171631, lng: 106.073339, type: 'Trường', name: 'CĐ Cơ điện & Xây dựng' },
-    { lat: 21.174498, lng: 106.073899, type: 'Trường', name: 'CĐ Sư Phạm Bắc Ninh' },
-    { lat: 21.192500, lng: 106.064500, type: 'Y tế', name: 'Bệnh viện Sản Nhi' }
+
+    { lat: 21.178179, lng: 106.075248, type: 'Trường', name: 'THPT Hàn Thuyên' },
+    { lat: 21.171631, lng: 106.073339, type: 'Trường', name: 'Cao Đẳng Cơ điện và Xây dựng' },
+    { lat: 21.174498, lng: 106.073899, type: 'Trường', name: 'Cao Đẳng Sư Phạm' },
+    { lat: 21.178179, lng: 106.076801, type: 'Trường', name: 'Cao Đẳng Công Nghiệp Bắc Ninh' },
+
+    { lat: 21.182301, lng: 106.072998, type: 'Hành chính', name: 'UBND Tỉnh Bắc Ninh' },
+    { lat: 21.180200, lng: 106.071971, type: 'Hành chính', name: 'Bưu Điện Tỉnh Bắc Ninh' },
+    { lat: 21.182098, lng: 106.075026, type: 'Hành chính', name: 'Sở Giáo Dục và Đào Tạo Tỉnh Bắc Ninh' },
+    { lat: 21.181638, lng: 106.076064, type: 'Hành chính', name: 'Chi Cụ Thủy Lợi Tỉnh Bắc Ninh' },
+    { lat: 21.180288, lng: 106.074857, type: 'Hành chính', name: 'Sở Khoa Học Công Nghệ' },
+    { lat: 21.179630, lng: 106.074358, type: 'Hành chính', name: 'Trụ Sở Tiếp Công Dân Tỉnh ' },
+    { lat: 21.183664, lng: 106.075407, type: 'Hành chính', name: 'Bảo Tàng' },
+    { lat: 21.185682, lng: 106.073974, type: 'Hành chính', name: 'Báo Bắc Ninh' },
+    { lat: 21.185317, lng: 106.077493, type: 'Hành chính', name: 'Tỉnh Ủy Bắc Ninh' },
+
+    { lat: 21.178474, lng: 106.072003, type: 'Mua sắm', name: 'Mua sắm 1' },
+    { lat: 21.177664, lng: 106.067371, type: 'Mua sắm', name: 'Mua sắm 2' },
+    { lat: 21.175113, lng: 106.065617, type: 'Mua sắm', name: 'Mua sắm 3' },
+    { lat: 21.173106, lng: 106.064726, type: 'Mua sắm', name: 'Mua sắm 4' },
+    { lat: 21.172389, lng: 106.062811, type: 'Mua sắm', name: 'Mua sắm 5' },
+    { lat: 21.180165, lng: 106.066019, type: 'Mua sắm', name: 'Mua sắm 6' },
+    { lat: 21.181608, lng: 106.066819, type: 'Mua sắm', name: 'Mua sắm 7' },
+    { lat: 21.183656, lng: 106.073452, type: 'Mua sắm', name: 'Mua sắm 8' },
+    { lat: 21.169162, lng: 106.091959, type: 'Mua sắm', name: 'Mua sắm 9' },
+    { lat: 21.167168, lng: 106.053402, type: 'Mua sắm', name: 'Mua sắm 10' },
+
+    { lat: 21.182003, lng: 106.071190, type: 'Y tế', name: 'Y tế 1' },
+    { lat: 21.187300, lng: 106.071716, type: 'Y tế', name: 'Y tế 2' },
+    { lat: 21.187773, lng: 106.062873, type: 'Y tế', name: 'Y tế 3' },
+    { lat: 21.184792, lng: 106.062436, type: 'Y tế', name: 'Y tế 4' },
+    { lat: 21.181201, lng: 106.057216, type: 'Y tế', name: 'Y tế 5' },
+    { lat: 21.176444, lng: 106.057141, type: 'Y tế', name: 'Y tế 6' },
+    { lat: 21.173267, lng: 106.054652, type: 'Y tế', name: 'Y tế 7' },
+    { lat: 21.167845, lng: 106.046069, type: 'Y tế', name: 'Y tế 8' },
+    { lat: 21.167845, lng: 106.066813, type: 'Y tế', name: 'Y tế 9' },
+    { lat: 21.169996, lng: 106.068363, type: 'Y tế', name: 'Y tế 10' },
+    { lat: 21.173327, lng: 106.078392, type: 'Y tế', name: 'Y tế 11' },
+    { lat: 21.189041, lng: 106.080790, type: 'Y tế', name: 'Y tế 12' },
+    { lat: 21.189926, lng: 106.080487, type: 'Y tế', name: 'Y tế 13' },
+    { lat: 21.169600, lng: 106.062300, type: 'Y tế', name: 'Y tế 14' },
+
+    { lat: 21.177281, lng: 106.070598, type: 'Ăn uống', name: 'Ăn uống 1' },
+    { lat: 21.178319, lng: 106.072135, type: 'Ăn uống', name: 'Ăn uống 2' },
+    { lat: 21.179482, lng: 106.070040, type: 'Ăn uống', name: 'Ăn uống 3' },
+    { lat: 21.182198, lng: 106.066840, type: 'Ăn uống', name: 'Ăn uống 4' },
+    { lat: 21.181695, lng: 106.067116, type: 'Ăn uống', name: 'Ăn uống 5' },
+    { lat: 21.185572, lng: 106.070528, type: 'Ăn uống', name: 'Ăn uống 6' },
+    { lat: 21.174722, lng: 106.079527, type: 'Ăn uống', name: 'Ăn uống 7' },
+    { lat: 21.176896, lng: 106.074581, type: 'Ăn uống', name: 'Ăn uống 8' },
+    { lat: 21.166606, lng: 106.052220, type: 'Ăn uống', name: 'Ăn uống 9' },
+    { lat: 21.189095, lng: 106.065000, type: 'Ăn uống', name: 'Ăn uống 10' },
+
+    { lat: 21.161791, lng: 106.066775, type: 'Đường xá', name: 'Đường xá 1' },
+    { lat: 21.164211, lng: 106.073076, type: 'Đường xá', name: 'Đường xá 2' },
+    { lat: 21.167664, lng: 106.074847, type: 'Đường xá', name: 'Đường xá 3' },
+    { lat: 21.166923, lng: 106.070210, type: 'Đường xá', name: 'Đường xá 4' },
+    { lat: 21.168945, lng: 106.069367, type: 'Đường xá', name: 'Đường xá 5' },
+    { lat: 21.168299, lng: 106.069676, type: 'Đường xá', name: 'Đường xá 6' },
+    { lat: 21.177701, lng: 106.071835, type: 'Đường xá', name: 'Đường xá 7' },
+    { lat: 21.177569, lng: 106.070292, type: 'Đường xá', name: 'Đường xá 8' },
+    { lat: 21.182200, lng: 106.064491, type: 'Đường xá', name: 'Đường xá 9' },
+    { lat: 21.189818, lng: 106.067259, type: 'Đường xá', name: 'Đường xá 10' },
+    { lat: 21.160033, lng: 106.048470, type: 'Đường xá', name: 'Đường xá 11' },
+    { lat: 21.184261, lng: 106.080890, type: 'Đường xá', name: 'Đường xá 12' },
+    { lat: 21.182430, lng: 106.078901, type: 'Đường xá', name: 'Đường xá 13' },
+    { lat: 21.183420, lng: 106.075250, type: 'Đường xá', name: 'Đường xá 14' }
   ];
 
+  // =========================
+  // HELPERS
+  // =========================
   function getStyle(type) {
     switch (type) {
       case 'Y tế': return { color: '#ef4444', icon: 'fa-heart-pulse' };
@@ -47,20 +157,6 @@
     }
   }
 
-  // DOM refs
-  const routingPanel = document.getElementById('routingPanel');
-  const btnDirect = document.getElementById('btnDirect');
-  const startInput = document.getElementById('startInput');
-  const endInput = document.getElementById('endInput');
-  const startBtn = document.getElementById('startBtn');
-  const itineraryContainer = document.getElementById('itineraryContainer');
-  const suggestionBox = document.getElementById('suggestionBox');
-  const searchInput = document.getElementById('searchInput');
-
-  // Render markers
-  const markersLayer = L.layerGroup().addTo(map);
-  let allMarkers = [];
-
   function escapeHtml(str) {
     return String(str)
       .replaceAll('&', '&amp;')
@@ -69,6 +165,63 @@
       .replaceAll('"', '&quot;')
       .replaceAll("'", '&#039;');
   }
+
+  function isMobile() {
+    return window.matchMedia && window.matchMedia('(max-width: 768px)').matches;
+  }
+
+  function applyInvertRule() {
+    const mapEl = document.getElementById('map');
+    if (!mapEl) return;
+    const isDark = document.body.classList.contains('dark-mode');
+    mapEl.classList.toggle('no-invert', isDark && currentBaseKey === 'sat');
+  }
+
+  // =========================
+  // DOM
+  // =========================
+  const routingPanel = document.getElementById('routingPanel');
+  const btnDirect = document.getElementById('btnDirect');
+  const startInput = document.getElementById('startInput');
+  const endInput = document.getElementById('endInput');
+  const startBtn = document.getElementById('startBtn');
+  const itineraryContainer = document.getElementById('itineraryContainer');
+  const suggestionBox = document.getElementById('suggestionBox');
+  const searchInput = document.getElementById('searchInput');
+  const btnTheme = document.getElementById('btnTheme');
+
+  // =========================
+  // THEME (Dark/Light)
+  // =========================
+  const THEME_KEY = 'bn_theme';
+
+  function setTheme(theme) {
+    const isDark = theme !== 'light';
+    document.body.classList.toggle('dark-mode', isDark);
+    document.body.classList.toggle('light-mode', !isDark);
+
+    if (btnTheme) {
+      btnTheme.innerHTML = isDark
+        ? '<i class="fa-solid fa-moon" aria-hidden="true"></i> <span>Dark</span>'
+        : '<i class="fa-solid fa-sun" aria-hidden="true"></i> <span>Light</span>';
+    }
+
+    applyInvertRule();
+    localStorage.setItem(THEME_KEY, isDark ? 'dark' : 'light');
+  }
+
+  window.toggleTheme = () => {
+    const isDarkNow = document.body.classList.contains('dark-mode');
+    setTheme(isDarkNow ? 'light' : 'dark');
+  };
+
+  setTheme(localStorage.getItem(THEME_KEY) || 'dark');
+
+  // =========================
+  // MARKERS + FILTER
+  // =========================
+  const markersLayer = L.layerGroup().addTo(map);
+  let allMarkers = [];
 
   function getCheckedTypes() {
     return Array.from(document.querySelectorAll('.filters input:checked')).map(i => i.value);
@@ -111,7 +264,6 @@
     allMarkers = [];
 
     const checked = getCheckedTypes();
-
     locations.forEach(loc => {
       if (!checked.includes(loc.type)) return;
 
@@ -124,9 +276,9 @@
   document.querySelectorAll('.filters input').forEach(cb => cb.addEventListener('change', renderMap));
   renderMap();
 
-  // --- ROUTING ---
-  // router.project-osrm.org demo server typically only supports the "driving" profile dataset.
-  // We keep the UI modes, but fall back to "driving" to avoid routing errors.
+  // =========================
+  // ROUTING
+  // =========================
   const PROFILE_MAP = { driving: 'driving', bike: 'driving', foot: 'driving' };
 
   let routingControl = null;
@@ -139,7 +291,7 @@
   let activeInput = 'start';
 
   function isRoutingEnabled() {
-    return routingPanel.style.display === 'block';
+    return routingPanel && routingPanel.style.display === 'block';
   }
 
   function updateTempMarker(type, latlng) {
@@ -168,10 +320,10 @@
   function setPoint(type, latlng, text) {
     if (type === 'start') {
       startPoint = latlng;
-      startInput.value = text || '';
+      if (startInput) startInput.value = text || '';
     } else {
       endPoint = latlng;
-      endInput.value = text || '';
+      if (endInput) endInput.value = text || '';
     }
     updateTempMarker(type, latlng);
   }
@@ -182,13 +334,10 @@
 
   function onMapClickSelect(e) {
     const coordText = `${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)}`;
-
-    // Fill missing first, then overwrite the active input
     let target;
     if (!startPoint) target = 'start';
     else if (!endPoint) target = 'end';
     else target = activeInput;
-
     setPoint(target, e.latlng, coordText);
   }
 
@@ -197,7 +346,7 @@
       map.removeControl(routingControl);
       routingControl = null;
     }
-    itineraryContainer.innerHTML = '';
+    if (itineraryContainer) itineraryContainer.innerHTML = '';
   }
 
   window.clearPoint = (type) => {
@@ -207,14 +356,20 @@
 
   function clearAllRouting({ removeClickHandler = true } = {}) {
     clearRouteOnly();
-
     setPoint('start', null, '');
     setPoint('end', null, '');
-
     if (removeClickHandler) map.off('click', onMapClickSelect);
   }
 
   window.toggleRouting = () => {
+    if (!routingPanel || !btnDirect) return;
+
+    // mobile: đóng layers panel nếu đang mở
+    if (isMobile()) {
+      const lp = document.getElementById('layersPanel');
+      if (lp && lp.style.display === 'block') lp.style.display = 'none';
+    }
+
     if (isRoutingEnabled()) {
       routingPanel.style.display = 'none';
       btnDirect.classList.remove('active');
@@ -234,14 +389,7 @@
       const el = document.getElementById(`mode-${m}`);
       if (el) el.classList.toggle('active', m === mode);
     });
-
     currentMode = mode;
-
-    // Optional gentle hint to avoid confusion
-    if (mode !== 'driving') {
-      console.info('Demo OSRM server thường chỉ hỗ trợ "driving"; chế độ khác sẽ dùng driving fallback.');
-    }
-
     if (startPoint && endPoint) window.calculateRoute();
   };
 
@@ -251,8 +399,7 @@
       return;
     }
 
-    startBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang tính...';
-
+    if (startBtn) startBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang tính...';
     if (routingControl) map.removeControl(routingControl);
 
     const profile = PROFILE_MAP[currentMode] || 'driving';
@@ -276,22 +423,18 @@
     }).addTo(map);
 
     routingControl.on('routesfound', () => {
-      startBtn.innerHTML = 'Bắt đầu';
-
-      // Copy the hidden itinerary into our own container
+      if (startBtn) startBtn.innerHTML = 'Bắt đầu';
       const hidden = routingControl.getContainer?.() || document.querySelector('.leaflet-routing-container');
-      if (hidden) itineraryContainer.innerHTML = hidden.innerHTML;
-
+      if (hidden && itineraryContainer) itineraryContainer.innerHTML = hidden.innerHTML;
       map.fitBounds(L.latLngBounds([startPoint, endPoint]), { padding: [50, 50] });
     });
 
     routingControl.on('routingerror', () => {
-      startBtn.innerHTML = 'Bắt đầu';
+      if (startBtn) startBtn.innerHTML = 'Bắt đầu';
       alert('Không tìm thấy đường đi.');
     });
   };
 
-  // Global actions from Popup
   window.startRouteFrom = (lat, lng, name) => {
     map.closePopup();
     if (!isRoutingEnabled()) window.toggleRouting();
@@ -304,9 +447,13 @@
     setPoint('end', L.latLng(lat, lng), name);
   };
 
-  // --- SEARCH ---
+  // =========================
+  // SEARCH
+  // =========================
   window.showSuggestions = (val) => {
     const inputVal = String(val).toLowerCase().trim();
+    if (!suggestionBox) return;
+
     if (inputVal.length < 1) {
       suggestionBox.style.display = 'none';
       return;
@@ -336,8 +483,8 @@
   };
 
   window.selectSuggestion = (name) => {
-    searchInput.value = name;
-    suggestionBox.style.display = 'none';
+    if (searchInput) searchInput.value = name;
+    if (suggestionBox) suggestionBox.style.display = 'none';
 
     const found = locations.find(l => l.name === name);
     if (!found) return;
@@ -350,7 +497,6 @@
       return;
     }
 
-    // If marker isn't rendered due to filters, enable its type and re-render
     const cb = document.querySelector(`.filters input[value="${CSS.escape(found.type)}"]`);
     if (cb) {
       cb.checked = true;
@@ -371,10 +517,12 @@
 
   document.addEventListener('click', (e) => {
     const box = document.querySelector('.search-box');
-    if (box && !box.contains(e.target)) suggestionBox.style.display = 'none';
+    if (box && !box.contains(e.target) && suggestionBox) suggestionBox.style.display = 'none';
   });
 
-  // --- GEOLOCATION ---
+  // =========================
+  // GEOLOCATION
+  // =========================
   let userMarker = null;
 
   map.on('locationfound', (e) => {
@@ -390,7 +538,9 @@
     map.locate({ setView: true, maxZoom: 16 });
   };
 
-  // --- LEGEND ---
+  // =========================
+  // LEGEND
+  // =========================
   window.toggleLegend = () => {
     const box = document.getElementById('legendBox');
     const btn = document.getElementById('openLegendBtn');
@@ -401,7 +551,44 @@
     btn.style.display = isHidden ? 'none' : 'flex';
   };
 
-  // Initial state
+  // =========================
+  // LAYERS PANEL
+  // =========================
+  window.toggleMapLayers = (force) => {
+    const panel = document.getElementById('layersPanel');
+    if (!panel) return;
+
+    // mobile: đóng routing panel nếu đang mở
+    if (isMobile() && routingPanel && routingPanel.style.display === 'block') {
+      routingPanel.style.display = 'none';
+      btnDirect?.classList.remove('active');
+    }
+
+    const next = (typeof force === 'boolean') ? force : (panel.style.display !== 'block');
+    panel.style.display = next ? 'block' : 'none';
+  };
+
+  window.setBaseLayer = (key) => {
+    if (!baseLayers[key]) return;
+    map.removeLayer(baseLayers[currentBaseKey]);
+    currentBaseKey = key;
+    map.addLayer(baseLayers[currentBaseKey]);
+
+    document.querySelectorAll('.layer-tile').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.base === key);
+    });
+
+    applyInvertRule();
+  };
+
+  window.toggleOverlayLayer = (key, enabled) => {
+    const layer = overlays[key];
+    if (!layer) return;
+    if (enabled) map.addLayer(layer);
+    else map.removeLayer(layer);
+  };
+
+  // Initial state legend
   const legendBox = document.getElementById('legendBox');
   const openLegendBtn = document.getElementById('openLegendBtn');
   if (legendBox) legendBox.style.display = 'block';
