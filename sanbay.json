@@ -1,0 +1,34 @@
+[
+  { "code": "HAN", "name": "Nội Bài (Hà Nội)", "country": "VN", "lat": 21.214184, "lng": 105.804171 },
+  { "code": "VDO", "name": "Vân Đồn (Quảng Ninh)", "country": "VN", "lat": 21.116998, "lng": 107.413315 },
+  { "code": "HPH", "name": "Cát Bi (Hải Phòng)", "country": "VN", "lat": 20.819386, "lng": 106.724989 },
+  { "code": "VII", "name": "Vinh (Nghệ An)", "country": "VN", "lat": 18.737593, "lng": 105.671318 },
+  { "code": "DAD", "name": "Đà Nẵng", "country": "VN", "lat": 16.043917, "lng": 108.199370 },
+  { "code": "CXR", "name": "Cam Ranh (Khánh Hòa)", "country": "VN", "lat": 11.998153, "lng": 109.219372 },
+  { "code": "SGN", "name": "Tân Sơn Nhất (TP.HCM)", "country": "VN", "lat": 10.818797, "lng": 106.651856 },
+  { "code": "PQC", "name": "Phú Quốc", "country": "VN", "lat": 10.169806, "lng": 103.993058 },
+
+  { "code": "BKK", "name": "Suvarnabhumi (Bangkok)", "country": "TH", "lat": 13.690000, "lng": 100.750112 },
+  { "code": "SIN", "name": "Changi (Singapore)", "country": "SG", "lat": 1.364420, "lng": 103.991531 },
+  { "code": "KUL", "name": "Kuala Lumpur (KUL)", "country": "MY", "lat": 2.745578, "lng": 101.709999 },
+  { "code": "HKG", "name": "Hong Kong (HKG)", "country": "HK", "lat": 22.308046, "lng": 113.918480 },
+  { "code": "ICN", "name": "Incheon (Seoul)", "country": "KR", "lat": 37.460190, "lng": 126.440695 },
+  { "code": "NRT", "name": "Narita (Tokyo)", "country": "JP", "lat": 35.772000, "lng": 140.392850 },
+
+  { "code": "DXB", "name": "Dubai (DXB)", "country": "AE", "lat": 25.253174, "lng": 55.365673 },
+  { "code": "DOH", "name": "Doha Hamad (DOH)", "country": "QA", "lat": 25.273056, "lng": 51.608056 },
+  { "code": "IST", "name": "Istanbul (IST)", "country": "TR", "lat": 41.275278, "lng": 28.751944 },
+
+  { "code": "LHR", "name": "Heathrow (London)", "country": "UK", "lat": 51.470020, "lng": -0.454295 },
+  { "code": "CDG", "name": "Charles de Gaulle (Paris)", "country": "FR", "lat": 49.009690, "lng": 2.547925 },
+  { "code": "FRA", "name": "Frankfurt (FRA)", "country": "DE", "lat": 50.037932, "lng": 8.562152 },
+  { "code": "MUC", "name": "Munich (MUC)", "country": "DE", "lat": 48.353783, "lng": 11.786086 },
+  { "code": "AMS", "name": "Schiphol (Amsterdam) (AMS)", "country": "NL", "lat": 52.310539, "lng": 4.768274 },
+  { "code": "MAD", "name": "Madrid (MAD)", "country": "ES", "lat": 40.489353, "lng": -3.567598 },
+  { "code": "BCN", "name": "Barcelona (BCN)", "country": "ES", "lat": 41.297445, "lng": 2.083294 },
+  { "code": "FCO", "name": "Rome Fiumicino (FCO)", "country": "IT", "lat": 41.800277, "lng": 12.238889 },
+  { "code": "MXP", "name": "Milan Malpensa (MXP)", "country": "IT", "lat": 45.630062, "lng": 8.723083 },
+  { "code": "ZRH", "name": "Zurich (ZRH)", "country": "CH", "lat": 47.458056, "lng": 8.548056 },
+  { "code": "VIE", "name": "Vienna (VIE)", "country": "AT", "lat": 48.110278, "lng": 16.569722 },
+  { "code": "HEL", "name": "Helsinki (HEL)", "country": "FI", "lat": 60.317222, "lng": 24.963333 }
+]

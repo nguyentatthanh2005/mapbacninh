@@ -3,11 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Bản đồ Bắc Ninh</title>
+  <title>Bắc Ninh Map</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -15,56 +14,59 @@
   <header class="toolbar">
     <div class="search-box" aria-label="Tìm địa điểm">
       <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-      <input
-        type="text"
-        id="searchInput"
-        placeholder="Tìm địa điểm..."
-        autocomplete="off"
-      >
+      <input id="searchInput" type="text" placeholder="Tìm địa điểm..." autocomplete="off">
       <div id="suggestionBox" class="suggestions-list" role="listbox" aria-label="Gợi ý"></div>
     </div>
 
     <div class="left-group">
       <div class="filters" aria-label="Bộ lọc địa điểm">
-        <label class="checkbox-item"><input type="checkbox" value="Hành chính" checked> Hành chính</label>
-        <label class="checkbox-item"><input type="checkbox" value="Trường" checked> Trường</label>
-        <label class="checkbox-item"><input type="checkbox" value="Y tế" checked> Y tế</label>
-        <label class="checkbox-item"><input type="checkbox" value="Ăn uống" checked> Ăn uống</label>
-        <label class="checkbox-item"><input type="checkbox" value="Mua sắm" checked> Mua sắm</label>
-        <label class="checkbox-item"><input type="checkbox" value="Đường xá" checked> Đường xá</label>
+        <label class="checkbox-item"><input type="checkbox" value="Hành chính" checked /> Hành chính</label>
+        <label class="checkbox-item"><input type="checkbox" value="Trường" checked /> Trường</label>
+        <label class="checkbox-item"><input type="checkbox" value="Y tế" checked /> Y tế</label>
+        <label class="checkbox-item"><input type="checkbox" value="Ăn uống" checked /> Ăn uống</label>
+        <label class="checkbox-item"><input type="checkbox" value="Mua sắm" checked /> Mua sắm</label>
+        <label class="checkbox-item"><input type="checkbox" value="Đường xá" checked /> Đường xá</label>
+        <label class="checkbox-item"><input type="checkbox" value="Sân bay" checked /> Sân bay</label>
+
+        <div class="filter-actions">
+          <button class="btn btn-mini" id="btnAllOn" type="button"><i class="fa-solid fa-check"></i> Tất cả</button>
+          <button class="btn btn-mini" id="btnAllOff" type="button"><i class="fa-solid fa-xmark"></i> Bỏ chọn</button>
+        </div>
       </div>
     </div>
 
     <div class="right-group">
       <button class="btn btn-secondary" type="button" onclick="toggleMapLayers()">
-        <i class="fa-solid fa-layer-group" aria-hidden="true"></i> <span>Lớp</span>
+        <i class="fa-solid fa-layer-group"></i> <span>Lớp</span>
       </button>
 
       <button class="btn btn-primary" id="btnDirect" type="button" onclick="toggleRouting()">
-        <i class="fa-solid fa-diamond" aria-hidden="true"></i> <span>Chỉ đường</span>
+        <i class="fa-solid fa-diamond"></i> <span>Chỉ đường</span>
       </button>
 
       <button class="btn btn-secondary" type="button" onclick="locateUser()">
-        <i class="fa-solid fa-location-dot" style="color:#ec4899" aria-hidden="true"></i> <span>Định vị</span>
-      </button>
-
-      <button class="btn btn-secondary" id="btnTheme" type="button" onclick="toggleTheme()">
-        <i class="fa-solid fa-moon" aria-hidden="true"></i> <span>Dark</span>
+        <i class="fa-solid fa-location-dot"></i> <span>Định vị</span>
       </button>
     </div>
   </header>
 
-  <!-- Panel chỉ đường -->
+  <!-- Routing panel -->
   <div id="routingPanel" class="custom-routing-panel" aria-label="Bảng chỉ đường">
     <div class="transport-modes">
-      <button class="mode-icon active" id="mode-driving" type="button" onclick="setMode('driving')" aria-label="Ô tô">
-        <i class="fa-solid fa-car-side" aria-hidden="true"></i>
+      <button class="mode-icon active" id="mode-car" type="button" onclick="setMode('car')" aria-label="Ô tô">
+        <i class="fa-solid fa-car-side"></i>
       </button>
-      <button class="mode-icon" id="mode-bike" type="button" onclick="setMode('bike')" aria-label="Xe đạp">
-        <i class="fa-solid fa-bicycle" aria-hidden="true"></i>
+
+      <button class="mode-icon" id="mode-moto" type="button" onclick="setMode('moto')" aria-label="Xe máy">
+        <i class="fa-solid fa-motorcycle"></i>
       </button>
+
       <button class="mode-icon" id="mode-foot" type="button" onclick="setMode('foot')" aria-label="Đi bộ">
-        <i class="fa-solid fa-person-walking" aria-hidden="true"></i>
+        <i class="fa-solid fa-person-walking"></i>
+      </button>
+
+      <button class="mode-icon" id="mode-plane" type="button" onclick="setMode('plane')" aria-label="Máy bay">
+        <i class="fa-solid fa-plane"></i>
       </button>
     </div>
 
@@ -80,33 +82,55 @@
       </div>
     </div>
 
-    <button class="start-btn" id="startBtn" type="button" onclick="calculateRoute()">
-      Bắt đầu
-    </button>
+    <!-- Plane options -->
+    <div id="planeBox" class="plane-box" style="display:none">
+      <div class="plane-row">
+        <label class="plane-label">SÂN BAY ĐI</label>
+        <select id="fromAirportSelect"></select>
+      </div>
 
+      <div class="plane-row">
+        <label class="plane-label">SÂN BAY ĐẾN</label>
+        <select id="toAirportSelect"></select>
+      </div>
+
+      <div class="plane-note">
+        * Máy bay: đi tới sân bay → bay nhiều chặng → hạ cánh → di chuyển đến điểm.
+      </div>
+    </div>
+
+    <div class="provider-row">
+      <label class="provider-toggle">
+        <input id="preferGH" type="checkbox">
+        Ưu tiên GraphHopper (có thể bị giới hạn)
+      </label>
+    </div>
+
+    <button class="start-btn" id="startBtn" type="button" onclick="calculateRoute()">Bắt đầu</button>
     <div id="itineraryContainer" class="itinerary-box"></div>
   </div>
 
-  <!-- Chú thích -->
+  <!-- Legend -->
   <div class="map-legend" id="legendBox">
     <button class="legend-close" type="button" onclick="toggleLegend()" aria-label="Đóng chú thích">
-      <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      <i class="fa-solid fa-xmark"></i>
     </button>
 
-    <h4><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Chú thích</h4>
-    <div class="legend-item"><div class="legend-dot" style="background-color:#3b82f6"><i class="fa-solid fa-building-columns"></i></div> <span>Hành chính</span></div>
-    <div class="legend-item"><div class="legend-dot" style="background-color:#8b5cf6"><i class="fa-solid fa-graduation-cap"></i></div> <span>Trường học</span></div>
-    <div class="legend-item"><div class="legend-dot" style="background-color:#ef4444"><i class="fa-solid fa-heart-pulse"></i></div> <span>Y tế</span></div>
-    <div class="legend-item"><div class="legend-dot" style="background-color:#f59e0b"><i class="fa-solid fa-utensils"></i></div> <span>Ăn uống</span></div>
-    <div class="legend-item"><div class="legend-dot" style="background-color:#ec4899"><i class="fa-solid fa-bag-shopping"></i></div> <span>Mua sắm</span></div>
-    <div class="legend-item"><div class="legend-dot" style="background-color:#10b981"><i class="fa-solid fa-road"></i></div> <span>Đường xá</span></div>
+    <h4><i class="fa-solid fa-layer-group"></i> Chú thích</h4>
+    <div class="legend-item"><div class="legend-dot" style="background-color:#2563eb"><i class="fa-solid fa-building-columns"></i></div> <span>Hành chính</span></div>
+    <div class="legend-item"><div class="legend-dot" style="background-color:#7c3aed"><i class="fa-solid fa-graduation-cap"></i></div> <span>Trường</span></div>
+    <div class="legend-item"><div class="legend-dot" style="background-color:#dc2626"><i class="fa-solid fa-heart-pulse"></i></div> <span>Y tế</span></div>
+    <div class="legend-item"><div class="legend-dot" style="background-color:#d97706"><i class="fa-solid fa-utensils"></i></div> <span>Ăn uống</span></div>
+    <div class="legend-item"><div class="legend-dot" style="background-color:#db2777"><i class="fa-solid fa-bag-shopping"></i></div> <span>Mua sắm</span></div>
+    <div class="legend-item"><div class="legend-dot" style="background-color:#059669"><i class="fa-solid fa-road"></i></div> <span>Đường xá</span></div>
+    <div class="legend-item"><div class="legend-dot" style="background-color:#0ea5e9"><i class="fa-solid fa-plane"></i></div> <span>Sân bay</span></div>
   </div>
 
   <button class="toggle-legend-btn" id="openLegendBtn" type="button" onclick="toggleLegend()" aria-label="Mở chú thích">
-    <i class="fa-solid fa-info" aria-hidden="true"></i>
+    <i class="fa-solid fa-info"></i>
   </button>
 
-  <!-- Panel lớp bản đồ -->
+  <!-- Layers panel -->
   <div id="layersPanel" class="layers-panel" aria-label="Thông tin chi tiết trên bản đồ">
     <div class="layers-header">
       <div class="layers-title">Thông tin chi tiết trên bản đồ</div>
@@ -137,7 +161,6 @@
 
     <div class="layers-section">
       <div class="section-title">Lớp phủ</div>
-
       <div class="overlay-list">
         <label class="overlay-item">
           <input type="checkbox" onchange="toggleOverlayLayer('bike', this.checked)">
@@ -150,18 +173,9 @@
         </label>
 
         <label class="overlay-item">
-          <input type="checkbox" onchange="toggleOverlayLayer('aqi', this.checked)">
-          Chất lượng không khí (AQI)
-        </label>
-
-        <label class="overlay-item">
           <input type="checkbox" onchange="toggleOverlayLayer('fires', this.checked)">
           Cháy rừng (NASA FIRMS)
         </label>
-      </div>
-
-      <div class="layer-note">
-        * AQI cần token WAQI trong <b>main.js</b>. Vệ tinh sẽ tự tắt “invert” khi Dark-mode.
       </div>
     </div>
   </div>
@@ -169,7 +183,6 @@
   <div id="map"></div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
   <script src="main.js"></script>
 </body>
 </html>
